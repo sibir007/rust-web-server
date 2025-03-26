@@ -2,6 +2,9 @@ use std::net::TcpListener;
 use std::net::TcpStream;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::io::Write;
+// use std::io::prelude::*;
+
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
@@ -20,7 +23,24 @@ fn handle_connection(mut stream: TcpStream) {
         .lines()
         .map(|line| line.unwrap())
         .take_while(|line| !line.is_empty())
+        // .map(|mut line| {line.push_str("\n-----------------------------------------------"); line})
+        // .map(|mut line| line.write_str("\n-----------------------------------------------"))
         .collect();
 
-    println!("Request: {:?}", http_request);
+    let response = "HTTP/1.1 200 OK\r\n\r\n";
+
+    stream.write_all(response.as_bytes()).unwrap();
 }
+
+// fn handle_connection(mut stream: TcpStream) {
+//     let buf_reader = BufReader::new(&stream);
+//     let http_request: Vec<_> = buf_reader
+//         .lines()
+//         .map(|line| line.unwrap())
+//         .take_while(|line| !line.is_empty())
+//         // .map(|mut line| {line.push_str("\n-----------------------------------------------"); line})
+//         // .map(|mut line| line.write_str("\n-----------------------------------------------"))
+//         .collect();
+
+//     println!("Request: {:?}", http_request);
+// }
